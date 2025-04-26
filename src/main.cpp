@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <iostream>
 #include "Cat.cpp"
 #include "Pipe.cpp"
@@ -23,12 +24,21 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
+            //Too long to append. Need to create a  class for a joystick and keyboard together
+            if (sf::Joystick::isConnected(0) && ((sf::Joystick::getAxisPosition(0,sf::Joystick::Y)<-20) || (sf::Joystick::isButtonPressed(0,3))))
+                || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
                 cat.jump();
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R){
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R || (sf::Joystick::isConnected(0) && (sf::Joystick::isButtonPressed(0,9)))){
                 pipes.clear();
                 pipes.emplace_back(Settings::WINDOW_WIDTH);
                 gameOver = false;
+            }
+
+            //Keep for debugging and locating buttions
+            for (unsigned int i = 0; i < sf::Joystick::getButtonCount(0); ++i) {
+                if (sf::Joystick::isButtonPressed(0, i)) {
+                    std::cout << "Button " << i << " is pressed\n";
+                }
             }
         }
 
